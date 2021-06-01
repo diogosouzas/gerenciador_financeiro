@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.sdiogo.gerenciadorfinanceiro.R
+import com.sdiogo.gerenciadorfinanceiro.extension.formataParaBrasileiro
+import com.sdiogo.gerenciadorfinanceiro.model.Transacao
+import kotlinx.android.synthetic.main.transacao_item.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ListaTransacoesAdapter(
-    transacoes: List<String>,
+    transacoes: List<Transacao>,
     context: Context
 ) : BaseAdapter() {
 
@@ -20,7 +25,7 @@ class ListaTransacoesAdapter(
         return transacoes.size
     }
 
-    override fun getItem(position: Int): String {
+    override fun getItem(position: Int): Transacao {
         return transacoes[position]
     }
 
@@ -28,9 +33,19 @@ class ListaTransacoesAdapter(
         return 0
     }
 
-    @SuppressLint("ViewHolder")
+    @SuppressLint("ViewHolder", "SetTextI18n")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        return LayoutInflater.from(context).inflate(R.layout.transacao_item, parent, false)
+        val viewCriada = LayoutInflater.from(context)
+            .inflate(R.layout.transacao_item, parent, false)
+
+        val transacao = transacoes[position]
+
+        viewCriada.transacao_valor.text = transacao.valor.toString()
+        viewCriada.transacao_categoria.text = transacao.categoria
+
+        viewCriada.transacao_data.text = transacao.data.formataParaBrasileiro()
+
+        return viewCriada
     }
 
 }
