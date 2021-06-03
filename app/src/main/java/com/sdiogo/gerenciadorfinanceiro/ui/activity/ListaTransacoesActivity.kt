@@ -1,10 +1,15 @@
 package com.sdiogo.gerenciadorfinanceiro.ui.activity
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.sdiogo.gerenciadorfinanceiro.R
 import com.sdiogo.gerenciadorfinanceiro.model.Tipo
 import com.sdiogo.gerenciadorfinanceiro.model.Transacao
+import com.sdiogo.gerenciadorfinanceiro.ui.ResumoView
 import com.sdiogo.gerenciadorfinanceiro.ui.adapter.ListaTransacoesAdapter
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 import java.math.BigDecimal
@@ -18,8 +23,31 @@ class ListaTransacoesActivity : AppCompatActivity() {
 
         val transacoes: List<Transacao> = transacoesDeExemplo()
 
+        configuraResumo(transacoes)
+
         configuraLista(transacoes)
 
+        lista_transacoes_adiciona_receita
+            .setOnClickListener {
+                val view: View = window.decorView
+                val viewCriada = LayoutInflater.from(this)
+                    .inflate(
+                        R.layout
+                            .form_transacao, view as ViewGroup,
+                        false
+                    )
+
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.adiciona_receita)
+                    .setView(viewCriada)
+                    .show()
+            }
+    }
+
+    private fun configuraResumo(transacoes: List<Transacao>) {
+        val view: View = window.decorView
+        val resumoView = ResumoView(this, view, transacoes)
+        resumoView.atualiza()
     }
 
     private fun configuraLista(transacoes: List<Transacao>) {
@@ -29,7 +57,7 @@ class ListaTransacoesActivity : AppCompatActivity() {
     private fun transacoesDeExemplo(): List<Transacao> {
         return listOf(
             Transacao(
-                valor = BigDecimal(20.5),
+                valor = BigDecimal(100),
                 tipo = Tipo.DESPESA,
                 categoria = "Almoço final de semana",
                 data = Calendar.getInstance()
@@ -40,11 +68,11 @@ class ListaTransacoesActivity : AppCompatActivity() {
                 categoria = "Economia"
             ),
             Transacao(
-                valor = BigDecimal(200),
+                valor = BigDecimal(100),
                 tipo = Tipo.DESPESA
             ),
             Transacao(
-                valor = BigDecimal(500),
+                valor = BigDecimal(200),
                 tipo = Tipo.RECEITA,
                 categoria = "Prêmio"
             )
