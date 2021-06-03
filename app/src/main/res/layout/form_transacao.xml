@@ -16,6 +16,7 @@
             android:id="@+id/form_transacao_valor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/braco"
             android:hint="@string/valor"
             android:inputType="numberDecimal" />
 
@@ -31,6 +32,7 @@
             android:layout_height="wrap_content"
             android:focusable="false"
             android:hint="@string/data"
+            android:background="@color/braco"
             android:inputType="none"
             tools:text="11/20/2014" />
 
