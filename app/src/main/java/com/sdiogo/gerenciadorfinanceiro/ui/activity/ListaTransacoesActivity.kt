@@ -1,5 +1,6 @@
 package com.sdiogo.gerenciadorfinanceiro.ui.activity
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,11 +8,13 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.sdiogo.gerenciadorfinanceiro.R
+import com.sdiogo.gerenciadorfinanceiro.extension.formataParaBrasileiro
 import com.sdiogo.gerenciadorfinanceiro.model.Tipo
 import com.sdiogo.gerenciadorfinanceiro.model.Transacao
 import com.sdiogo.gerenciadorfinanceiro.ui.ResumoView
 import com.sdiogo.gerenciadorfinanceiro.ui.adapter.ListaTransacoesAdapter
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
+import kotlinx.android.synthetic.main.form_transacao.view.*
 import java.math.BigDecimal
 import java.util.*
 
@@ -36,6 +39,28 @@ class ListaTransacoesActivity : AppCompatActivity() {
                             .form_transacao, view as ViewGroup,
                         false
                     )
+
+                val ano = 2021
+                val mes = 5
+                val dia = 3
+
+                val hoje = Calendar.getInstance()
+                viewCriada.form_transacao_data
+                    .setText(hoje.formataParaBrasileiro())
+                viewCriada.form_transacao_data
+                    .setOnClickListener {
+                        DatePickerDialog(
+                            this,
+                            { view, year, month, dayOfMonth ->
+                                val dataSelecionada = Calendar.getInstance()
+                                dataSelecionada.set(year, month, dayOfMonth)
+                                viewCriada.form_transacao_data.setText(
+                                    dataSelecionada
+                                        .formataParaBrasileiro()
+                                )
+                            }, ano, mes, dia
+                        ).show()
+                    }
 
                 AlertDialog.Builder(this)
                     .setTitle(R.string.adiciona_receita)
