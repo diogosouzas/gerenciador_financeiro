@@ -24,33 +24,33 @@ class AdicionaTransacaoDialog(
 ) {
 
     private val viewCriada = criaLayout()
+    private val campoValor = viewCriada.form_transacao_valor
+    private val campoCategoria = viewCriada.form_transacao_categoria
+    private val campoData = viewCriada.form_transacao_data
 
-    fun configuraDialog(transacaoDelegate: TransacaoDelegate) {
+    fun chama(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
         configuraCampoData()
-        configuraCampoCategoria()
-        configuraFormulario(transacaoDelegate)
+        configuraCampoCategoria(tipo)
+        configuraFormulario(tipo, transacaoDelegate)
     }
 
-    private fun configuraFormulario(transacaoDelegate: TransacaoDelegate) {
+    private fun configuraFormulario(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
+
+        val titulo = tituloPor(tipo)
+
         AlertDialog.Builder(context)
-            .setTitle(R.string.adiciona_receita)
+            .setTitle(titulo)
             .setView(viewCriada)
             .setPositiveButton(
                 "Adicionar"
             ) { _, _ ->
-                val valorEmTexto = viewCriada
-                    .form_transacao_valor.text.toString()
-                val dataEmTexto = viewCriada
-                    .form_transacao_data.text.toString()
-                val categoriaEmTexto = viewCriada
-                    .form_transacao_categoria.selectedItem.toString()
-
+                val valorEmTexto = campoValor.text.toString()
+                val dataEmTexto = campoData.text.toString()
+                val categoriaEmTexto = campoCategoria.selectedItem.toString()
                 val valor = converteCampoValor(valorEmTexto)
-
                 val data = dataEmTexto.converteParaCalendar()
-
                 val transacaoCriada = Transacao(
-                    tipo = Tipo.RECEITA,
+                    tipo = tipo,
                     valor = valor,
                     data = data,
                     categoria = categoriaEmTexto
@@ -63,16 +63,36 @@ class AdicionaTransacaoDialog(
             .show()
     }
 
-    private fun configuraCampoCategoria() {
+    private fun tituloPor(tipo: Tipo): Int {
+        return if (tipo == Tipo.RECEITA) {
+            R.string.adiciona_receita
+        } else {
+            R.string.adiciona_despesa
+        }
+    }
+
+    private fun configuraCampoCategoria(tipo: Tipo) {
+
+        val categorias = categoriasPor(tipo)
+
         val adapter = ArrayAdapter
             .createFromResource(
                 context,
-                R.array.categorias_de_receita,
+                categorias,
                 android.R.layout.simple_spinner_dropdown_item
             )
 
-        viewCriada.form_transacao_categoria
+        campoCategoria
             .adapter = adapter
+    }
+
+    private fun categoriasPor(tipo: Tipo): Int {
+        return if (tipo == Tipo.RECEITA) {
+            R.array.categorias_de_receita
+        } else {
+            R.array.categorias_de_despesa
+
+        }
     }
 
     private fun configuraCampoData() {
@@ -82,19 +102,19 @@ class AdicionaTransacaoDialog(
         val mes = hoje.get(Calendar.MONTH)
         val dia = hoje.get(Calendar.DAY_OF_MONTH)
 
-        viewCriada.form_transacao_data
+        campoData
             .setText(
                 hoje
                     .formataParaBrasileiro()
             )
-        viewCriada.form_transacao_data
+        campoData
             .setOnClickListener {
                 DatePickerDialog(
                     context,
                     { _, year, month, dayOfMonth ->
                         val dataSelecionada = Calendar.getInstance()
                         dataSelecionada.set(year, month, dayOfMonth)
-                        viewCriada.form_transacao_data.setText(
+                        campoData.setText(
                             dataSelecionada
                                 .formataParaBrasileiro()
                         )
@@ -127,3 +147,4 @@ class AdicionaTransacaoDialog(
     }
 
 }
+
