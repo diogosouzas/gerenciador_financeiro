@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.sdiogo.gerenciadorfinanceiro.R
 import com.sdiogo.gerenciadorfinanceiro.delegate.TransacaoDelegate
+import com.sdiogo.gerenciadorfinanceiro.model.Tipo
 import com.sdiogo.gerenciadorfinanceiro.model.Transacao
 import com.sdiogo.gerenciadorfinanceiro.ui.ResumoView
 import com.sdiogo.gerenciadorfinanceiro.ui.adapter.ListaTransacoesAdapter
@@ -21,20 +22,31 @@ class ListaTransacoesActivity : AppCompatActivity() {
         setContentView(R.layout.activity_lista_transacoes)
 
         configuraResumo()
-
         configuraLista()
+        configuraFab()
 
+    }
+
+    private fun configuraFab() {
         lista_transacoes_adiciona_receita
             .setOnClickListener {
-                AdicionaTransacaoDialog(
-                    window.decorView as ViewGroup, this,
-                ).configuraDialog(object  : TransacaoDelegate{
-                    override fun delegate(transacao: Transacao) {
-                        atualizaTransacoes(transacao)
-                        lista_transacoes_adiciona_menu.close(true)
-                    }
-                })
+                chamaDialogAdicao(Tipo.RECEITA)
             }
+        lista_transacoes_adiciona_despesa
+            .setOnClickListener {
+                chamaDialogAdicao(Tipo.DESPESA)
+            }
+    }
+
+    private fun chamaDialogAdicao(tipo: Tipo) {
+        AdicionaTransacaoDialog(
+            window.decorView as ViewGroup, this,
+        ).chama(tipo, object : TransacaoDelegate {
+            override fun delegate(transacao: Transacao) {
+                atualizaTransacoes(transacao)
+                lista_transacoes_adiciona_menu.close(true)
+            }
+        })
     }
 
     private fun atualizaTransacoes(transacao: Transacao) {
